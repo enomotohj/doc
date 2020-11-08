@@ -1,22 +1,104 @@
-=================
-20201109_やったこと
-=================
+================================
+REST APIをWebClientで呼出
+================================
 
 
-1.sphinxセットアップ
-=================
+バックエンドサービス
+--------------------------------
+* springbootで実装
+* ユーザ情報（User）を取得するREST APIを用意
+* HTTPメソッド : GET
+* URL : /backend/api/v1/user?id={id}&name={name}
 
-http://debugroom.github.io/doc/memo/work/sphinx/install.html
-https://planset-study-sphinx.readthedocs.io/ja/latest/03.html
+サンプルプログラム
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* コントローラ
+.. code-block:: java
+
+    @RestController
+    @RequestMapping("backend/api/v1")
+    public class UserController {
+
+        public static final Logger logger = LoggerFactory.getLogger(UserController.class);
+        
+        @GetMapping("/user")
+        public User getUser(@RequestParam("id") String id, @RequestParam("name") String name) {
+            logger.info("execute backend controller");
+            User user = new User(id,name);
+            return user;
+        }
+    
+    }
+
+
+.. note::
+
+    JavaBeanクラスはLombokのアノテーションを利用することでコーディング量が減る。
+    ※IntelliJ上はコンストラクタがないと怒られる
+
+    .. code-block:: java
+
+        @Data
+        @AllArgsConstructor
+        public class User {
+
+            private String id;
+            private String name;
+
+        }
+    
+
+* サービス
+手抜きのため作らない
 
 
 
-2.springbootアプリケーション実装
-=================
 
+クライアント
+--------------------------------
+* springbootで実装
+* WebClientでバックエンドサービスを呼出
 
-3.hogehoge
-=================
+サンプルプログラム
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* コントローラ
+.. code-block:: java
 
-4.hogehogehoge
-=================
+    @RestController
+    @RequestMapping("frontend/api/v1")
+    public class OrchestrationController {
+
+        public static final Logger logger = LoggerFactory.getLogger(OrchestrationController.class);
+
+        @GetMapping("/userbywebclient")
+        public Mono<User> getUserByWebClient(@RequestParam("id") String id, @RequestParam("name") String name) {
+            logger.info("execute frontend controller");
+            Mono<User> user = orchestrationService.getUserByWebClient(id, name);
+            return user;
+        }
+
+    }
+
+* サービス
+.. code-block:: java
+
+    public class OrchestrationServiceImpl implements OrchestrationService {
+
+        public static final String URL = "http://localhost:8082/backend/api/v1";
+
+        public static final Logger logger = LoggerFactory.getLogger(OrchestrationServiceImpl.class);
+
+        private final WebClient webClient;
+
+        public OrchestrationServiceImpl(WebClient.Builder webClientBuilder) {
+            this.webClient = webClientBuilder.baseUrl(URL).build();
+        }
+
+        public Mono<User> getUserByWebClient(String id, String name) {
+            logger.info("execute frontend service by WebClient");
+            String reqUrl = URL + "/user?id=" + id + "&name=" + name;
+            return this.webClient.get().uri(reqUrl, name).retrieve().bodyToMono(User.class);
+        }
+
+    }
+
