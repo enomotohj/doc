@@ -281,6 +281,19 @@
 </div>
 <div class="section" id="id5">
 <h2>確認結果<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>リクエストURL：<a class="reference external" href="http://localhost:8081/frontend/api/v1/userbywebclient?id=9999&amp;name=hoge">http://localhost:8081/frontend/api/v1/userbywebclient?id=9999&amp;name=hoge</a></p>
+<ul class="simple">
+<li>レスポンス（json）</li>
+</ul>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;9999&quot;</span><span class="p">,</span>
+<span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;hoge&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>ログ（クライアント）</li>
+</ul>
 <div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="mi">2020</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">09</span> <span class="mi">16</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span><span class="mf">59.475</span>  <span class="n">INFO</span> <span class="mi">21451</span> <span class="o">---</span> <span class="o">[</span><span class="n">nio</span><span class="o">-</span><span class="mi">8081</span><span class="o">-</span><span class="n">exec</span><span class="o">-</span><span class="mi">1</span><span class="o">]</span> <span class="n">c</span><span class="p">.</span><span class="na">e</span><span class="p">.</span><span class="na">controller</span><span class="p">.</span><span class="na">OrchestrationController</span>   <span class="p">:</span> <span class="n">execute</span> <span class="n">frontend</span> <span class="n">controller</span>
 <span class="mi">2020</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">09</span> <span class="mi">16</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span><span class="mf">59.477</span>  <span class="n">INFO</span> <span class="mi">21451</span> <span class="o">---</span> <span class="o">[</span><span class="n">nio</span><span class="o">-</span><span class="mi">8081</span><span class="o">-</span><span class="n">exec</span><span class="o">-</span><span class="mi">1</span><span class="o">]</span> <span class="n">c</span><span class="p">.</span><span class="na">e</span><span class="p">.</span><span class="na">service</span><span class="p">.</span><span class="na">OrchestrationServiceImpl</span>     <span class="p">:</span> <span class="n">execute</span> <span class="n">frontend</span> <span class="n">service</span> <span class="n">by</span> <span class="n">WebClient</span>
 </pre></div>
