@@ -92,6 +92,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#id4">サンプルプログラム</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">確認結果</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">参考ページ</a></li>
 </ul>
 </li>
 </ul>
@@ -161,6 +163,10 @@
             
   <div class="section" id="rest-apiwebclient">
 <h1>REST APIをWebClientで呼出<a class="headerlink" href="#rest-apiwebclient" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>これまでRestTemplateしか使ったことがなかったのでWebClientの実装方法を確認する。</li>
+<li>REST APIを提供するバックエンドサービスをWebClient経由で呼び出す。</li>
+</ul>
 <div class="section" id="id1">
 <h2>バックエンドサービス<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
 <ul class="simple">
@@ -193,7 +199,7 @@
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p>JavaBeanクラスはLombokのアノテーションを利用することでコーディング量が減る。
-※IntelliJ上はコンストラクタがないと怒られる</p>
+※IntelliJ上はコンストラクタがないって怒られる</p>
 <div class="last highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Data</span>
 <span class="nd">@AllArgsConstructor</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">User</span> <span class="p">{</span>
@@ -219,6 +225,15 @@
 </ul>
 <div class="section" id="id4">
 <h3>サンプルプログラム<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>pom.xml</li>
+</ul>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;dependency&gt;</span>
+        <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-webflux<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+</div>
 <ul class="simple">
 <li>コントローラ</li>
 </ul>
@@ -263,6 +278,18 @@
 </pre></div>
 </div>
 </div>
+</div>
+<div class="section" id="id5">
+<h2>確認結果<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="mi">2020</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">09</span> <span class="mi">16</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span><span class="mf">59.475</span>  <span class="n">INFO</span> <span class="mi">21451</span> <span class="o">---</span> <span class="o">[</span><span class="n">nio</span><span class="o">-</span><span class="mi">8081</span><span class="o">-</span><span class="n">exec</span><span class="o">-</span><span class="mi">1</span><span class="o">]</span> <span class="n">c</span><span class="p">.</span><span class="na">e</span><span class="p">.</span><span class="na">controller</span><span class="p">.</span><span class="na">OrchestrationController</span>   <span class="p">:</span> <span class="n">execute</span> <span class="n">frontend</span> <span class="n">controller</span>
+<span class="mi">2020</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">09</span> <span class="mi">16</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span><span class="mf">59.477</span>  <span class="n">INFO</span> <span class="mi">21451</span> <span class="o">---</span> <span class="o">[</span><span class="n">nio</span><span class="o">-</span><span class="mi">8081</span><span class="o">-</span><span class="n">exec</span><span class="o">-</span><span class="mi">1</span><span class="o">]</span> <span class="n">c</span><span class="p">.</span><span class="na">e</span><span class="p">.</span><span class="na">service</span><span class="p">.</span><span class="na">OrchestrationServiceImpl</span>     <span class="p">:</span> <span class="n">execute</span> <span class="n">frontend</span> <span class="n">service</span> <span class="n">by</span> <span class="n">WebClient</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>参考ページ<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://spring.pleiades.io/spring-boot/docs/2.1.4.RELEASE/reference/html/boot-features-webclient.html">https://spring.pleiades.io/spring-boot/docs/2.1.4.RELEASE/reference/html/boot-features-webclient.html</a>
+<a class="reference external" href="https://spring.pleiades.io/spring-framework/docs/5.1.6.RELEASE/spring-framework-reference/web-reactive.html#webflux-client">https://spring.pleiades.io/spring-framework/docs/5.1.6.RELEASE/spring-framework-reference/web-reactive.html#webflux-client</a></p>
 </div>
 </div>
 

@@ -2,6 +2,8 @@
 REST APIをWebClientで呼出
 ================================
 
+* これまでRestTemplateしか使ったことがなかったのでWebClientの実装方法を確認する。
+* REST APIを提供するバックエンドサービスをWebClient経由で呼び出す。
 
 バックエンドサービス
 --------------------------------
@@ -34,7 +36,7 @@ REST APIをWebClientで呼出
 .. note::
 
     JavaBeanクラスはLombokのアノテーションを利用することでコーディング量が減る。
-    ※IntelliJ上はコンストラクタがないと怒られる
+    ※IntelliJ上はコンストラクタがないって怒られる
 
     .. code-block:: java
 
@@ -61,6 +63,14 @@ REST APIをWebClientで呼出
 
 サンプルプログラム
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* pom.xml
+.. code-block:: xml
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+
 * コントローラ
 .. code-block:: java
 
@@ -102,3 +112,16 @@ REST APIをWebClientで呼出
 
     }
 
+
+確認結果
+--------------------------------
+.. code-block:: java
+
+    2020-11-09 16:13:59.475  INFO 21451 --- [nio-8081-exec-1] c.e.controller.OrchestrationController   : execute frontend controller
+    2020-11-09 16:13:59.477  INFO 21451 --- [nio-8081-exec-1] c.e.service.OrchestrationServiceImpl     : execute frontend service by WebClient
+
+
+参考ページ
+--------------------------------
+https://spring.pleiades.io/spring-boot/docs/2.1.4.RELEASE/reference/html/boot-features-webclient.html
+https://spring.pleiades.io/spring-framework/docs/5.1.6.RELEASE/spring-framework-reference/web-reactive.html#webflux-client
