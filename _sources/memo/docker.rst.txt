@@ -1,0 +1,9 @@
+=======================================
+docker
+=======================================
+
+Docker Hub アカウントとリポジトリの作成
+https://docs.docker.jp/docker-for-windows/step_five.html
+
+docker pushしたら拒否された
+https://qiita.com/shundayo/items/4ae35930fe9f85f535b0

@@ -1,0 +1,138 @@
+================================
+REST APIをWebClientで呼出
+================================
+
+* これまでRestTemplateしか使ったことがなかったのでWebClientの実装方法を確認する。
+* REST APIを提供するバックエンドサービスをWebClient経由で呼び出す。
+
+バックエンドサービス
+--------------------------------
+* springbootで実装
+* ユーザ情報（User）を取得するREST APIを用意
+* HTTPメソッド : GET
+* URL : /backend/api/v1/user?id={id}&name={name}
+
+サンプルプログラム
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* コントローラ
+.. code-block:: java
+
+    @RestController
+    @RequestMapping("backend/api/v1")
+    public class UserController {
+
+        public static final Logger logger = LoggerFactory.getLogger(UserController.class);
+        
+        @GetMapping("/user")
+        public User getUser(@RequestParam("id") String id, @RequestParam("name") String name) {
+            logger.info("execute backend controller");
+            User user = new User(id,name);
+            return user;
+        }
+    
+    }
+
+
+.. note::
+
+    JavaBeanクラスはLombokのアノテーションを利用することでコーディング量が減る。
+    ※IntelliJ上はコンストラクタがないって怒られる
+
+    .. code-block:: java
+
+        @Data
+        @AllArgsConstructor
+        public class User {
+
+            private String id;
+            private String name;
+
+        }
+    
+
+* サービス
+手抜きのため作らない
+
+
+
+
+クライアント
+--------------------------------
+* springbootで実装
+* WebClientでバックエンドサービスを呼出
+
+サンプルプログラム
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+* pom.xml
+.. code-block:: xml
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+
+* コントローラ
+.. code-block:: java
+
+    @RestController
+    @RequestMapping("frontend/api/v1")
+    public class OrchestrationController {
+
+        public static final Logger logger = LoggerFactory.getLogger(OrchestrationController.class);
+
+        @GetMapping("/userbywebclient")
+        public Mono<User> getUserByWebClient(@RequestParam("id") String id, @RequestParam("name") String name) {
+            logger.info("execute frontend controller");
+            Mono<User> user = orchestrationService.getUserByWebClient(id, name);
+            return user;
+        }
+
+    }
+
+* サービス
+.. code-block:: java
+
+    public class OrchestrationServiceImpl implements OrchestrationService {
+
+        public static final String URL = "http://localhost:8082/backend/api/v1";
+
+        public static final Logger logger = LoggerFactory.getLogger(OrchestrationServiceImpl.class);
+
+        private final WebClient webClient;
+
+        public OrchestrationServiceImpl(WebClient.Builder webClientBuilder) {
+            this.webClient = webClientBuilder.baseUrl(URL).build();
+        }
+
+        public Mono<User> getUserByWebClient(String id, String name) {
+            logger.info("execute frontend service by WebClient");
+            String reqUrl = URL + "/user?id=" + id + "&name=" + name;
+            return this.webClient.get().uri(reqUrl, name).retrieve().bodyToMono(User.class);
+        }
+
+    }
+
+
+確認結果
+--------------------------------
+リクエストURL：http://localhost:8081/frontend/api/v1/userbywebclient?id=9999&name=hoge
+
+* レスポンス（json）
+.. code-block:: java
+
+    {
+    "id": "9999",
+    "name": "hoge"
+    }
+
+* ログ（クライアント）
+.. code-block:: java
+
+    2020-11-09 16:13:59.475  INFO 21451 --- [nio-8081-exec-1] c.e.controller.OrchestrationController   : execute frontend controller
+    2020-11-09 16:13:59.477  INFO 21451 --- [nio-8081-exec-1] c.e.service.OrchestrationServiceImpl     : execute frontend service by WebClient
+
+
+参考ページ
+--------------------------------
+https://spring.pleiades.io/spring-boot/docs/2.1.4.RELEASE/reference/html/boot-features-webclient.html
+https://spring.pleiades.io/spring-framework/docs/5.1.6.RELEASE/spring-framework-reference/web-reactive.html#webflux-client

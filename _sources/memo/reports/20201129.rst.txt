@@ -1,0 +1,176 @@
+=======================================
+Amazon SQSを使ったSpringアプリケーション
+=======================================
+
+やったこと
+========================
+* チュートリアルを参考にAmazon SQSを使ったSpringアプリケーション構築
+* Amazon SQSでキュー（ma_enomotohj_queue）を作成
+* ProducerとConsumerをspringbootで作成
+* メッセージ受信後のバッチ処理はスキップ
+
+イメージ
+========================
+.. image:: ../../img/sqs_sample.png
+
+
+チュートリアル実施状況
+========================
+
+================================================ ============================================================ ============
+title                                            link                                                         status
+================================================ ============================================================ ============
+Amazon SQSを使ったSpringアプリケーション(1)          https://news.mynavi.jp/itsearch/article/devsoft/4656         Done!!
+Amazon SQSを使ったSpringアプリケーション(2)          https://news.mynavi.jp/itsearch/article/devsoft/4689         Done!!
+Amazon SQSを使ったSpringアプリケーション(3)          https://news.mynavi.jp/itsearch/article/devsoft/4713         Skip!!
+Amazon SQSを使ったSpringアプリケーション(4)          https://news.mynavi.jp/itsearch/article/devsoft/4756         Skip!!
+Amazon SQSを使ったSpringアプリケーション(5)          https://news.mynavi.jp/itsearch/article/devsoft/4767         Done!!
+================================================ ============================================================ ============
+
+
+Producer実装（抜粋）
+------------------------
+
+pom.xml
+
+.. code-block:: xml
+
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-aws</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-aws-messaging</artifactId>
+    </dependency>
+
+
+SampleRestController.java →RESTインタフェースを提供するコントローラクラス
+
+.. code-block:: java
+
+    @RestController
+    @RequestMapping("api/v1")
+    public class SampleRestController {
+
+        @Autowired
+        SampleRepository sampleRepository;
+
+        @GetMapping("/batch")
+        public String batch(String message) {
+            sampleRepository.save(
+                    Sample.builder()
+                            .message(message)
+                            .build());
+            return "Queue accepted.";
+        }
+        
+    }
+
+SampleRepositoryImpl.java　→キューに対してメッセージを送るクラス
+
+.. code-block:: java
+
+    @Slf4j
+    @Component
+    public class SampleRepositoryImpl implements SampleRepository{
+
+        @Autowired
+        QueueMessagingTemplate queueMessagingTemplate;
+
+        @Override
+        public void save(Sample sample) {
+            log.info("produced message : " + sample.getMessage());
+            queueMessagingTemplate.convertAndSend("ma_enomotohj_queue", sample.getMessage());
+        }
+
+    }
+
+Consumer実装（抜粋）
+------------------------
+
+pom.xml
+
+.. code-block:: xml
+
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-aws</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-starter-aws-messaging</artifactId>
+    </dependency>
+
+
+MessageListener.java　→キューにあるメッセージを取得して処理するクラス
+
+.. code-block:: java
+
+    @Slf4j
+    @Component
+    @EnableSqs
+    public class MessageListener {
+
+        @SqsListener(value = "ma_enomotohj_queue", deletionPolicy = SqsMessageDeletionPolicy.ON_SUCCESS)
+        public void onMessage(String message)  {
+        log.info("consumed message : " + message);
+        }
+
+    }
+
+確認結果
+========================
+* Producerのエンドポイント（/api/v1/batch）に対してcurlでhttpリクエストを送信
+* クエリパラメータにはmessage=test
+
+producerログ
+
+.. code-block:: java
+
+    > curl http://localhost:8080/api/v1/batch?message=test
+    2020-12-01 01:30:35.518  INFO 24415 --- [nio-8080-exec-1] c.e.d.d.repository.SampleRepositoryImpl  : produced message : test
+
+consumerログ
+
+.. code-block:: java
+
+    2020-12-01 01:30:36.199  INFO 24828 --- [enerContainer-2] c.e.demo.app.listener.MessageListener    : consumed message : test
+
+つまづいた箇所
+========================
+
+* maven updateでエラー発生
+.. code-block:: java
+
+    Could not find artifact org.springframework.cloud:spring-cloud-starter-aws:pom:unknown in central (https://repo.maven.apache.org/maven2)
+
+pom.xmlに以下を追加
+
+.. code-block:: xml
+
+    <properties>
+        <spring-cloud.version>Hoxton.SR9</spring-cloud.version>
+    </properties>
+    
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+* springboot起動エラー
+
+.. code-block:: java
+
+    org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'sqsConfig': Injection of autowired dependencies failed; nested exception is java.lang.IllegalArgumentException: Could not resolve placeholder 'cloud.aws.region.static' in value "${cloud.aws.region.static}"
+
+application-dev.ymlが読み込まれていなかったことが原因。
+springbootの起動時にprofileをdevに設定。
+

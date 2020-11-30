@@ -1,0 +1,355 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>REST APIをWebClientで呼出 &mdash; enomotohj 0.1-SNAPSHOTS documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> enomotohj
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">REST APIをWebClientで呼出</a><ul>
+<li><a class="reference internal" href="#id1">バックエンドサービス</a><ul>
+<li><a class="reference internal" href="#id2">サンプルプログラム</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id3">クライアント</a><ul>
+<li><a class="reference internal" href="#id4">サンプルプログラム</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#id5">確認結果</a></li>
+<li><a class="reference internal" href="#id6">参考ページ</a></li>
+</ul>
+</li>
+</ul>
+</div>
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">enomotohj</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>REST APIをWebClientで呼出</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/memo/reports/20201109.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="rest-apiwebclient">
+<h1>REST APIをWebClientで呼出<a class="headerlink" href="#rest-apiwebclient" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li>これまでRestTemplateしか使ったことがなかったのでWebClientの実装方法を確認する。</li>
+<li>REST APIを提供するバックエンドサービスをWebClient経由で呼び出す。</li>
+</ul>
+<div class="section" id="id1">
+<h2>バックエンドサービス<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>springbootで実装</li>
+<li>ユーザ情報（User）を取得するREST APIを用意</li>
+<li>HTTPメソッド : GET</li>
+<li>URL : /backend/api/v1/user?id={id}&amp;name={name}</li>
+</ul>
+<div class="section" id="id2">
+<h3>サンプルプログラム<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>コントローラ</li>
+</ul>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@RestController</span>
+<span class="nd">@RequestMapping</span><span class="p">(</span><span class="s">&quot;backend/api/v1&quot;</span><span class="p">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">UserController</span> <span class="p">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="p">.</span><span class="na">getLogger</span><span class="p">(</span><span class="n">UserController</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+
+    <span class="nd">@GetMapping</span><span class="p">(</span><span class="s">&quot;/user&quot;</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="n">User</span> <span class="nf">getUser</span><span class="p">(</span><span class="nd">@RequestParam</span><span class="p">(</span><span class="s">&quot;id&quot;</span><span class="p">)</span> <span class="n">String</span> <span class="n">id</span><span class="p">,</span> <span class="nd">@RequestParam</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span> <span class="n">String</span> <span class="n">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">logger</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&quot;execute backend controller&quot;</span><span class="p">);</span>
+        <span class="n">User</span> <span class="n">user</span> <span class="o">=</span> <span class="k">new</span> <span class="n">User</span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="n">name</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">user</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>JavaBeanクラスはLombokのアノテーションを利用することでコーディング量が減る。
+※IntelliJ上はコンストラクタがないって怒られる</p>
+<div class="last highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Data</span>
+<span class="nd">@AllArgsConstructor</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">User</span> <span class="p">{</span>
+
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">id</span><span class="p">;</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="p">;</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<ul class="simple">
+<li>サービス</li>
+</ul>
+<p>手抜きのため作らない</p>
+</div>
+</div>
+<div class="section" id="id3">
+<h2>クライアント<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>springbootで実装</li>
+<li>WebClientでバックエンドサービスを呼出</li>
+</ul>
+<div class="section" id="id4">
+<h3>サンプルプログラム<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>pom.xml</li>
+</ul>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;dependency&gt;</span>
+        <span class="nt">&lt;groupId&gt;</span>org.springframework.boot<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>spring-boot-starter-webflux<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>コントローラ</li>
+</ul>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@RestController</span>
+<span class="nd">@RequestMapping</span><span class="p">(</span><span class="s">&quot;frontend/api/v1&quot;</span><span class="p">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrchestrationController</span> <span class="p">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="p">.</span><span class="na">getLogger</span><span class="p">(</span><span class="n">OrchestrationController</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+
+    <span class="nd">@GetMapping</span><span class="p">(</span><span class="s">&quot;/userbywebclient&quot;</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="n">Mono</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="nf">getUserByWebClient</span><span class="p">(</span><span class="nd">@RequestParam</span><span class="p">(</span><span class="s">&quot;id&quot;</span><span class="p">)</span> <span class="n">String</span> <span class="n">id</span><span class="p">,</span> <span class="nd">@RequestParam</span><span class="p">(</span><span class="s">&quot;name&quot;</span><span class="p">)</span> <span class="n">String</span> <span class="n">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">logger</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&quot;execute frontend controller&quot;</span><span class="p">);</span>
+        <span class="n">Mono</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="n">user</span> <span class="o">=</span> <span class="n">orchestrationService</span><span class="p">.</span><span class="na">getUserByWebClient</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">name</span><span class="p">);</span>
+        <span class="k">return</span> <span class="n">user</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>サービス</li>
+</ul>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">OrchestrationServiceImpl</span> <span class="kd">implements</span> <span class="n">OrchestrationService</span> <span class="p">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">URL</span> <span class="o">=</span> <span class="s">&quot;http://localhost:8082/backend/api/v1&quot;</span><span class="p">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">Logger</span> <span class="n">logger</span> <span class="o">=</span> <span class="n">LoggerFactory</span><span class="p">.</span><span class="na">getLogger</span><span class="p">(</span><span class="n">OrchestrationServiceImpl</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">WebClient</span> <span class="n">webClient</span><span class="p">;</span>
+
+    <span class="kd">public</span> <span class="nf">OrchestrationServiceImpl</span><span class="p">(</span><span class="n">WebClient</span><span class="p">.</span><span class="na">Builder</span> <span class="n">webClientBuilder</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="na">webClient</span> <span class="o">=</span> <span class="n">webClientBuilder</span><span class="p">.</span><span class="na">baseUrl</span><span class="p">(</span><span class="n">URL</span><span class="p">).</span><span class="na">build</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="kd">public</span> <span class="n">Mono</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="nf">getUserByWebClient</span><span class="p">(</span><span class="n">String</span> <span class="n">id</span><span class="p">,</span> <span class="n">String</span> <span class="n">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">logger</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&quot;execute frontend service by WebClient&quot;</span><span class="p">);</span>
+        <span class="n">String</span> <span class="n">reqUrl</span> <span class="o">=</span> <span class="n">URL</span> <span class="o">+</span> <span class="s">&quot;/user?id=&quot;</span> <span class="o">+</span> <span class="n">id</span> <span class="o">+</span> <span class="s">&quot;&amp;name=&quot;</span> <span class="o">+</span> <span class="n">name</span><span class="p">;</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="na">webClient</span><span class="p">.</span><span class="na">get</span><span class="p">().</span><span class="na">uri</span><span class="p">(</span><span class="n">reqUrl</span><span class="p">,</span> <span class="n">name</span><span class="p">).</span><span class="na">retrieve</span><span class="p">().</span><span class="na">bodyToMono</span><span class="p">(</span><span class="n">User</span><span class="p">.</span><span class="na">class</span><span class="p">);</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>確認結果<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<p>リクエストURL：<a class="reference external" href="http://localhost:8081/frontend/api/v1/userbywebclient?id=9999&amp;name=hoge">http://localhost:8081/frontend/api/v1/userbywebclient?id=9999&amp;name=hoge</a></p>
+<ul class="simple">
+<li>レスポンス（json）</li>
+</ul>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="s">&quot;9999&quot;</span><span class="p">,</span>
+<span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="s">&quot;hoge&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>ログ（クライアント）</li>
+</ul>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="mi">2020</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">09</span> <span class="mi">16</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span><span class="mf">59.475</span>  <span class="n">INFO</span> <span class="mi">21451</span> <span class="o">---</span> <span class="o">[</span><span class="n">nio</span><span class="o">-</span><span class="mi">8081</span><span class="o">-</span><span class="n">exec</span><span class="o">-</span><span class="mi">1</span><span class="o">]</span> <span class="n">c</span><span class="p">.</span><span class="na">e</span><span class="p">.</span><span class="na">controller</span><span class="p">.</span><span class="na">OrchestrationController</span>   <span class="p">:</span> <span class="n">execute</span> <span class="n">frontend</span> <span class="n">controller</span>
+<span class="mi">2020</span><span class="o">-</span><span class="mi">11</span><span class="o">-</span><span class="mi">09</span> <span class="mi">16</span><span class="p">:</span><span class="mi">13</span><span class="p">:</span><span class="mf">59.477</span>  <span class="n">INFO</span> <span class="mi">21451</span> <span class="o">---</span> <span class="o">[</span><span class="n">nio</span><span class="o">-</span><span class="mi">8081</span><span class="o">-</span><span class="n">exec</span><span class="o">-</span><span class="mi">1</span><span class="o">]</span> <span class="n">c</span><span class="p">.</span><span class="na">e</span><span class="p">.</span><span class="na">service</span><span class="p">.</span><span class="na">OrchestrationServiceImpl</span>     <span class="p">:</span> <span class="n">execute</span> <span class="n">frontend</span> <span class="n">service</span> <span class="n">by</span> <span class="n">WebClient</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2>参考ページ<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="https://spring.pleiades.io/spring-boot/docs/2.1.4.RELEASE/reference/html/boot-features-webclient.html">https://spring.pleiades.io/spring-boot/docs/2.1.4.RELEASE/reference/html/boot-features-webclient.html</a>
+<a class="reference external" href="https://spring.pleiades.io/spring-framework/docs/5.1.6.RELEASE/spring-framework-reference/web-reactive.html#webflux-client">https://spring.pleiades.io/spring-framework/docs/5.1.6.RELEASE/spring-framework-reference/web-reactive.html#webflux-client</a></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, enomotohj
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -10,7 +10,10 @@ Welcome to enomotohj's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   reports/20201109
+   memo/reports/20201109
+   memo/reports/20201116
+   memo/reports/20201129
+   memo/docker
 
 Indices and tables
 ==================

@@ -1,0 +1,408 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Amazon SQSを使ったSpringアプリケーション &mdash; enomotohj 0.1-SNAPSHOTS documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="docker" href="../docker.html" />
+    <link rel="prev" title="AWS ECS上に構築するSpringアプリケーション" href="20201116.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> enomotohj
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="20201109.html">REST APIをWebClientで呼出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20201116.html">AWS ECS上に構築するSpringアプリケーション</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Amazon SQSを使ったSpringアプリケーション</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">やったこと</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">イメージ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">チュートリアル実施状況</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#producer">Producer実装（抜粋）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#consumer">Consumer実装（抜粋）</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">確認結果</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">つまづいた箇所</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../docker.html">docker</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">enomotohj</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Amazon SQSを使ったSpringアプリケーション</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/memo/reports/20201129.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="amazon-sqsspring">
+<h1>Amazon SQSを使ったSpringアプリケーション<a class="headerlink" href="#amazon-sqsspring" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>やったこと<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>チュートリアルを参考にAmazon SQSを使ったSpringアプリケーション構築</li>
+<li>Amazon SQSでキュー（ma_enomotohj_queue）を作成</li>
+<li>ProducerとConsumerをspringbootで作成</li>
+<li>メッセージ受信後のバッチ処理はスキップ</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2>イメージ<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<img alt="../../_images/sqs_sample.png" src="../../_images/sqs_sample.png" />
+</div>
+<div class="section" id="id3">
+<h2>チュートリアル実施状況<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="40%" />
+<col width="50%" />
+<col width="10%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">title</th>
+<th class="head">link</th>
+<th class="head">status</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Amazon SQSを使ったSpringアプリケーション(1)</td>
+<td><a class="reference external" href="https://news.mynavi.jp/itsearch/article/devsoft/4656">https://news.mynavi.jp/itsearch/article/devsoft/4656</a></td>
+<td>Done!!</td>
+</tr>
+<tr class="row-odd"><td>Amazon SQSを使ったSpringアプリケーション(2)</td>
+<td><a class="reference external" href="https://news.mynavi.jp/itsearch/article/devsoft/4689">https://news.mynavi.jp/itsearch/article/devsoft/4689</a></td>
+<td>Done!!</td>
+</tr>
+<tr class="row-even"><td>Amazon SQSを使ったSpringアプリケーション(3)</td>
+<td><a class="reference external" href="https://news.mynavi.jp/itsearch/article/devsoft/4713">https://news.mynavi.jp/itsearch/article/devsoft/4713</a></td>
+<td>Skip!!</td>
+</tr>
+<tr class="row-odd"><td>Amazon SQSを使ったSpringアプリケーション(4)</td>
+<td><a class="reference external" href="https://news.mynavi.jp/itsearch/article/devsoft/4756">https://news.mynavi.jp/itsearch/article/devsoft/4756</a></td>
+<td>Skip!!</td>
+</tr>
+<tr class="row-even"><td>Amazon SQSを使ったSpringアプリケーション(5)</td>
+<td><a class="reference external" href="https://news.mynavi.jp/itsearch/article/devsoft/4767">https://news.mynavi.jp/itsearch/article/devsoft/4767</a></td>
+<td>Done!!</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="producer">
+<h3>Producer実装（抜粋）<a class="headerlink" href="#producer" title="Permalink to this headline">¶</a></h3>
+<p>pom.xml</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework.cloud<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-cloud-starter-aws<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework.cloud<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-cloud-starter-aws-messaging<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+</div>
+<p>SampleRestController.java →RESTインタフェースを提供するコントローラクラス</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@RestController</span>
+<span class="nd">@RequestMapping</span><span class="p">(</span><span class="s">&quot;api/v1&quot;</span><span class="p">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SampleRestController</span> <span class="p">{</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="n">SampleRepository</span> <span class="n">sampleRepository</span><span class="p">;</span>
+
+    <span class="nd">@GetMapping</span><span class="p">(</span><span class="s">&quot;/batch&quot;</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">batch</span><span class="p">(</span><span class="n">String</span> <span class="n">message</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">sampleRepository</span><span class="p">.</span><span class="na">save</span><span class="p">(</span>
+                <span class="n">Sample</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+                        <span class="p">.</span><span class="na">message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                        <span class="p">.</span><span class="na">build</span><span class="p">());</span>
+        <span class="k">return</span> <span class="s">&quot;Queue accepted.&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>SampleRepositoryImpl.java　→キューに対してメッセージを送るクラス</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Slf4j</span>
+<span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SampleRepositoryImpl</span> <span class="kd">implements</span> <span class="n">SampleRepository</span><span class="p">{</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="n">QueueMessagingTemplate</span> <span class="n">queueMessagingTemplate</span><span class="p">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">save</span><span class="p">(</span><span class="n">Sample</span> <span class="n">sample</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&quot;produced message : &quot;</span> <span class="o">+</span> <span class="n">sample</span><span class="p">.</span><span class="na">getMessage</span><span class="p">());</span>
+        <span class="n">queueMessagingTemplate</span><span class="p">.</span><span class="na">convertAndSend</span><span class="p">(</span><span class="s">&quot;ma_enomotohj_queue&quot;</span><span class="p">,</span> <span class="n">sample</span><span class="p">.</span><span class="na">getMessage</span><span class="p">());</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="consumer">
+<h3>Consumer実装（抜粋）<a class="headerlink" href="#consumer" title="Permalink to this headline">¶</a></h3>
+<p>pom.xml</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework.cloud<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-cloud-starter-aws<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.springframework.cloud<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>spring-cloud-starter-aws-messaging<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+</div>
+<p>MessageListener.java　→キューにあるメッセージを取得して処理するクラス</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Slf4j</span>
+<span class="nd">@Component</span>
+<span class="nd">@EnableSqs</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MessageListener</span> <span class="p">{</span>
+
+    <span class="nd">@SqsListener</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">&quot;ma_enomotohj_queue&quot;</span><span class="p">,</span> <span class="n">deletionPolicy</span> <span class="o">=</span> <span class="n">SqsMessageDeletionPolicy</span><span class="p">.</span><span class="na">ON_SUCCESS</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">onMessage</span><span class="p">(</span><span class="n">String</span> <span class="n">message</span><span class="p">)</span>  <span class="p">{</span>
+    <span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&quot;consumed message : &quot;</span> <span class="o">+</span> <span class="n">message</span><span class="p">);</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="id4">
+<h2>確認結果<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Producerのエンドポイント（/api/v1/batch）に対してcurlでhttpリクエストを送信</li>
+<li>クエリパラメータにはmessage=test</li>
+</ul>
+<p>producerログ</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">curl</span> <span class="n">http</span><span class="p">:</span><span class="c1">//localhost:8080/api/v1/batch?message=test</span>
+<span class="mi">2020</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mo">01</span> <span class="mo">01</span><span class="p">:</span><span class="mi">30</span><span class="p">:</span><span class="mf">35.518</span>  <span class="n">INFO</span> <span class="mi">24415</span> <span class="o">---</span> <span class="o">[</span><span class="n">nio</span><span class="o">-</span><span class="mi">8080</span><span class="o">-</span><span class="n">exec</span><span class="o">-</span><span class="mi">1</span><span class="o">]</span> <span class="n">c</span><span class="p">.</span><span class="na">e</span><span class="p">.</span><span class="na">d</span><span class="p">.</span><span class="na">d</span><span class="p">.</span><span class="na">repository</span><span class="p">.</span><span class="na">SampleRepositoryImpl</span>  <span class="p">:</span> <span class="n">produced</span> <span class="n">message</span> <span class="p">:</span> <span class="n">test</span>
+</pre></div>
+</div>
+<p>consumerログ</p>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="mi">2020</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mo">01</span> <span class="mo">01</span><span class="p">:</span><span class="mi">30</span><span class="p">:</span><span class="mf">36.199</span>  <span class="n">INFO</span> <span class="mi">24828</span> <span class="o">---</span> <span class="o">[</span><span class="n">enerContainer</span><span class="o">-</span><span class="mi">2</span><span class="o">]</span> <span class="n">c</span><span class="p">.</span><span class="na">e</span><span class="p">.</span><span class="na">demo</span><span class="p">.</span><span class="na">app</span><span class="p">.</span><span class="na">listener</span><span class="p">.</span><span class="na">MessageListener</span>    <span class="p">:</span> <span class="n">consumed</span> <span class="n">message</span> <span class="p">:</span> <span class="n">test</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id5">
+<h2>つまづいた箇所<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>maven updateでエラー発生</li>
+</ul>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="n">Could</span> <span class="n">not</span> <span class="n">find</span> <span class="n">artifact</span> <span class="n">org</span><span class="p">.</span><span class="na">springframework</span><span class="p">.</span><span class="na">cloud</span><span class="p">:</span><span class="n">spring</span><span class="o">-</span><span class="n">cloud</span><span class="o">-</span><span class="n">starter</span><span class="o">-</span><span class="n">aws</span><span class="p">:</span><span class="n">pom</span><span class="p">:</span><span class="n">unknown</span> <span class="n">in</span> <span class="nf">central</span> <span class="p">(</span><span class="n">https</span><span class="p">:</span><span class="c1">//repo.maven.apache.org/maven2)</span>
+</pre></div>
+</div>
+<p>pom.xmlに以下を追加</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;properties&gt;</span>
+    <span class="nt">&lt;spring-cloud.version&gt;</span>Hoxton.SR9<span class="nt">&lt;/spring-cloud.version&gt;</span>
+<span class="nt">&lt;/properties&gt;</span>
+
+<span class="nt">&lt;dependencyManagement&gt;</span>
+    <span class="nt">&lt;dependencies&gt;</span>
+        <span class="nt">&lt;dependency&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>org.springframework.cloud<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>spring-cloud-dependencies<span class="nt">&lt;/artifactId&gt;</span>
+            <span class="nt">&lt;version&gt;</span>${spring-cloud.version}<span class="nt">&lt;/version&gt;</span>
+            <span class="nt">&lt;type&gt;</span>pom<span class="nt">&lt;/type&gt;</span>
+            <span class="nt">&lt;scope&gt;</span>import<span class="nt">&lt;/scope&gt;</span>
+        <span class="nt">&lt;/dependency&gt;</span>
+    <span class="nt">&lt;/dependencies&gt;</span>
+<span class="nt">&lt;/dependencyManagement&gt;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>springboot起動エラー</li>
+</ul>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span>org.springframework.beans.factory.BeanCreationException: Error creating bean with name &#39;sqsConfig&#39;: Injection of autowired dependencies failed; nested exception is java.lang.IllegalArgumentException: Could not resolve placeholder &#39;cloud.aws.region.static&#39; in value &quot;${cloud.aws.region.static}&quot;
+</pre></div>
+</div>
+<p>application-dev.ymlが読み込まれていなかったことが原因。
+springbootの起動時にprofileをdevに設定。</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../docker.html" class="btn btn-neutral float-right" title="docker" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="20201116.html" class="btn btn-neutral float-left" title="AWS ECS上に構築するSpringアプリケーション" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, enomotohj
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
