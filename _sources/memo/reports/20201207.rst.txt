@@ -1,0 +1,123 @@
+=======================================
+Amazon SQSを使ったSpringアプリケーション２
+=======================================
+
+やったこと
+========================
+* ProducerとConsumerをコンテナで実行
+
+コンテナイメージ作成
+========================
+
+Dockerfile作成
+------------------------
+
+* sqs-producer/Dockerfile
+
+.. code-block:: xml
+
+    FROM adoptopenjdk/openjdk11:latest
+    ARG JAR_FILE=target/*.jar
+    COPY ${JAR_FILE} sqs-producer-0.0.1-SNAPSHOT.jar
+    ENTRYPOINT ["sh","-c","java -jar -Dspring.profiles.active=dev sqs-producer-0.0.1-SNAPSHOT.jar"]
+
+* sqs-consumer/Dockerfile
+
+.. code-block:: xml
+
+    FROM adoptopenjdk/openjdk11:latest
+    ARG JAR_FILE=target/*.jar
+    COPY ${JAR_FILE} sqs-producer-0.0.1-SNAPSHOT.jar
+    ENTRYPOINT ["sh","-c","java -jar -Dspring.profiles.active=dev sqs-producer-0.0.1-SNAPSHOT.jar"]
+
+docker build
+------------------------
+
+.. code-block:: xml
+
+    $ cd {home}/workspace/sqs-producer
+    $ docker build -t enomoso/sqs-producer:latest .
+    $ cd {home}/workspace/sqs-consumer
+    $ docker build -t enomoso/sqs-consumer:latest .
+
+
+docker run
+------------------------
+
+1. Producer側からdocker runしてみる
+
+.. code-block:: xml
+
+    $ docker run --rm -it -p 8081:8080 enomoso/sqs-producer:latest
+
+.. code-block:: xml
+
+    curl http://localhost:8080/api/v1/batch?message=test
+
+.. code-block:: xml
+
+    2020-12-06 14:10:49.257 ERROR 6 --- [nio-8080-exec-1] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is com.amazonaws.SdkClientException: Unable to load AWS credentials from any provider in the chain: [EnvironmentVariableCredentialsProvider: Unable to load AWS credentials from environment variables (AWS_ACCESS_KEY_ID (or AWS_ACCESS_KEY) and AWS_SECRET_KEY (or AWS_SECRET_ACCESS_KEY)), SystemPropertiesCredentialsProvider: Unable to load AWS credentials from Java system properties (aws.accessKeyId and aws.secretKey), WebIdentityTokenCredentialsProvider: To use assume role profiles the aws-java-sdk-sts module must be on the class path., com.amazonaws.auth.profile.ProfileCredentialsProvider@1e514861: profile file cannot be null, com.amazonaws.auth.EC2ContainerCredentialsProviderWrapper@79ad1bcc: The requested metadata is not found at http://169.254.169.254/latest/meta-data/iam/security-credentials/]] ...
+
+* エラーが発生。
+* awsのcredentialが参照できてないとのこと。
+
+2. docker runコマンドの引数にAWS_ACCESS_KEY_ID、AWS_SECRET_ACCESS_KEYを設定し再チャレンジ
+
+.. code-block:: xml
+
+    $ docker run --rm -it -p 8081:8080 -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY enomoso/sqs-consumer:latest    
+
+.. note::
+
+    事前にaws認証情報をホストの環境変数に設定
+        AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id)
+        AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key)
+
+.. code-block:: xml
+
+    curl http://localhost:8080/api/v1/batch?message=test
+
+.. code-block:: xml
+
+    2020-12-06 14:29:27.078 ERROR 6 --- [nio-8080-exec-1] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is com.amazonaws.SdkClientException: Unable to execute HTTP request: sqs.ap-northeast-1.amazonaws.com] with root cause
+    java.net.UnknownHostException: sqs.ap-northeast-1.amazonaws.com
+
+* UnknownHostExceptionなので名前解決に失敗している？
+* dnsの設定が怪しい
+
+3. docker runコマンドの引数に--dns 8.8.8.8を追加
+
+.. code-block:: xml
+
+    $ docker run --rm -it -p 8081:8080 -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --dns 8.8.8.8 enomoso/sqs-producer:latest    
+
+* SQSにメッセージ送信成功
+
+.. code-block:: xml
+
+    $ curl http://localhost:8080/api/v1/batch?message=test
+    
+.. code-block:: java
+
+    2020-12-06 14:42:31.147  INFO 6 --- [nio-8080-exec-1] c.e.d.d.repository.SampleRepositoryImpl  : produced message : test
+
+* Consumer側も同様にdocker runして正常にメッセージ受信成功
+
+.. code-block:: xml
+
+    docker run --rm -it -p 8082:8080 -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --dns 8.8.8.8 enomoso/sqs-consumer:latest
+
+.. code-block:: java
+
+    2020-12-06 14:48:15.154  INFO 6 --- [enerContainer-2] c.e.demo.app.listener.MessageListener    : consumed message : test
+
+    
+
+参考資料
+------------------------
+
+* DockerコンテナにAWS資格情報を手軽に渡したい
+    https://infraya.work/posts/docker_aws_accesskey/
+
+* UbuntuデスクトップでDockerコンテナに任意のdnsを設定する
+    https://mzryuka.hatenablog.jp/entry/2019/08/07/235613

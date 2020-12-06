@@ -1,0 +1,345 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Amazon SQSを使ったSpringアプリケーション２ &mdash; enomotohj 0.1-SNAPSHOTS documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="Amazon SQSを使ったSpringアプリケーション" href="20201129.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> enomotohj
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="20201109.html">REST APIをWebClientで呼出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20201116.html">AWS ECS上に構築するSpringアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20201129.html">Amazon SQSを使ったSpringアプリケーション</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Amazon SQSを使ったSpringアプリケーション２</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#id1">やったこと</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">コンテナイメージ作成</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dockerfile">Dockerfile作成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#docker-build">docker build</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#docker-run">docker run</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">参考資料</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">enomotohj</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Amazon SQSを使ったSpringアプリケーション２</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/memo/reports/20201207.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="amazon-sqsspring2">
+<h1>Amazon SQSを使ったSpringアプリケーション２<a class="headerlink" href="#amazon-sqsspring2" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2>やったこと<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>ProducerとConsumerをコンテナで実行</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h2>コンテナイメージ作成<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="dockerfile">
+<h3>Dockerfile作成<a class="headerlink" href="#dockerfile" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>sqs-producer/Dockerfile</li>
+</ul>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>FROM adoptopenjdk/openjdk11:latest
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} sqs-producer-0.0.1-SNAPSHOT.jar
+ENTRYPOINT [&quot;sh&quot;,&quot;-c&quot;,&quot;java -jar -Dspring.profiles.active=dev sqs-producer-0.0.1-SNAPSHOT.jar&quot;]
+</pre></div>
+</div>
+<ul class="simple">
+<li>sqs-consumer/Dockerfile</li>
+</ul>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>FROM adoptopenjdk/openjdk11:latest
+ARG JAR_FILE=target/*.jar
+COPY ${JAR_FILE} sqs-producer-0.0.1-SNAPSHOT.jar
+ENTRYPOINT [&quot;sh&quot;,&quot;-c&quot;,&quot;java -jar -Dspring.profiles.active=dev sqs-producer-0.0.1-SNAPSHOT.jar&quot;]
+</pre></div>
+</div>
+</div>
+<div class="section" id="docker-build">
+<h3>docker build<a class="headerlink" href="#docker-build" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>$ cd {home}/workspace/sqs-producer
+$ docker build -t enomoso/sqs-producer:latest .
+$ cd {home}/workspace/sqs-consumer
+$ docker build -t enomoso/sqs-consumer:latest .
+</pre></div>
+</div>
+</div>
+<div class="section" id="docker-run">
+<h3>docker run<a class="headerlink" href="#docker-run" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>Producer側からdocker runしてみる</li>
+</ol>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>$ docker run --rm -it -p 8081:8080 enomoso/sqs-producer:latest
+</pre></div>
+</div>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>curl http://localhost:8080/api/v1/batch?message=test
+</pre></div>
+</div>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>2020-12-06 14:10:49.257 ERROR 6 --- [nio-8080-exec-1] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is com.amazonaws.SdkClientException: Unable to load AWS credentials from any provider in the chain: [EnvironmentVariableCredentialsProvider: Unable to load AWS credentials from environment variables (AWS_ACCESS_KEY_ID (or AWS_ACCESS_KEY) and AWS_SECRET_KEY (or AWS_SECRET_ACCESS_KEY)), SystemPropertiesCredentialsProvider: Unable to load AWS credentials from Java system properties (aws.accessKeyId and aws.secretKey), WebIdentityTokenCredentialsProvider: To use assume role profiles the aws-java-sdk-sts module must be on the class path., com.amazonaws.auth.profile.ProfileCredentialsProvider@1e514861: profile file cannot be null, com.amazonaws.auth.EC2ContainerCredentialsProviderWrapper@79ad1bcc: The requested metadata is not found at http://169.254.169.254/latest/meta-data/iam/security-credentials/]] ...
+</pre></div>
+</div>
+<ul class="simple">
+<li>エラーが発生。</li>
+<li>awsのcredentialが参照できてないとのこと。</li>
+</ul>
+<ol class="arabic simple" start="2">
+<li>docker runコマンドの引数にAWS_ACCESS_KEY_ID、AWS_SECRET_ACCESS_KEYを設定し再チャレンジ</li>
+</ol>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>$ docker run --rm -it -p 8081:8080 -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY enomoso/sqs-consumer:latest
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<dl class="last docutils">
+<dt>事前にaws認証情報をホストの環境変数に設定</dt>
+<dd>AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id)
+AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key)</dd>
+</dl>
+</div>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>curl http://localhost:8080/api/v1/batch?message=test
+</pre></div>
+</div>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>2020-12-06 14:29:27.078 ERROR 6 --- [nio-8080-exec-1] o.a.c.c.C.[.[.[/].[dispatcherServlet]    : Servlet.service() for servlet [dispatcherServlet] in context with path [] threw exception [Request processing failed; nested exception is com.amazonaws.SdkClientException: Unable to execute HTTP request: sqs.ap-northeast-1.amazonaws.com] with root cause
+java.net.UnknownHostException: sqs.ap-northeast-1.amazonaws.com
+</pre></div>
+</div>
+<ul class="simple">
+<li>UnknownHostExceptionなので名前解決に失敗している？</li>
+<li>dnsの設定が怪しい</li>
+</ul>
+<ol class="arabic simple" start="3">
+<li>docker runコマンドの引数に–dns 8.8.8.8を追加</li>
+</ol>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>$ docker run --rm -it -p 8081:8080 -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --dns 8.8.8.8 enomoso/sqs-producer:latest
+</pre></div>
+</div>
+<ul class="simple">
+<li>SQSにメッセージ送信成功</li>
+</ul>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>$ curl http://localhost:8080/api/v1/batch?message=test
+</pre></div>
+</div>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="mi">2020</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mo">06</span> <span class="mi">14</span><span class="p">:</span><span class="mi">42</span><span class="p">:</span><span class="mf">31.147</span>  <span class="n">INFO</span> <span class="mi">6</span> <span class="o">---</span> <span class="o">[</span><span class="n">nio</span><span class="o">-</span><span class="mi">8080</span><span class="o">-</span><span class="n">exec</span><span class="o">-</span><span class="mi">1</span><span class="o">]</span> <span class="n">c</span><span class="p">.</span><span class="na">e</span><span class="p">.</span><span class="na">d</span><span class="p">.</span><span class="na">d</span><span class="p">.</span><span class="na">repository</span><span class="p">.</span><span class="na">SampleRepositoryImpl</span>  <span class="p">:</span> <span class="n">produced</span> <span class="n">message</span> <span class="p">:</span> <span class="n">test</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li>Consumer側も同様にdocker runして正常にメッセージ受信成功</li>
+</ul>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>docker run --rm -it -p 8082:8080 -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY --dns 8.8.8.8 enomoso/sqs-consumer:latest
+</pre></div>
+</div>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="mi">2020</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mo">06</span> <span class="mi">14</span><span class="p">:</span><span class="mi">48</span><span class="p">:</span><span class="mf">15.154</span>  <span class="n">INFO</span> <span class="mi">6</span> <span class="o">---</span> <span class="o">[</span><span class="n">enerContainer</span><span class="o">-</span><span class="mi">2</span><span class="o">]</span> <span class="n">c</span><span class="p">.</span><span class="na">e</span><span class="p">.</span><span class="na">demo</span><span class="p">.</span><span class="na">app</span><span class="p">.</span><span class="na">listener</span><span class="p">.</span><span class="na">MessageListener</span>    <span class="p">:</span> <span class="n">consumed</span> <span class="n">message</span> <span class="p">:</span> <span class="n">test</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id3">
+<h3>参考資料<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li><dl class="first docutils">
+<dt>DockerコンテナにAWS資格情報を手軽に渡したい</dt>
+<dd><a class="reference external" href="https://infraya.work/posts/docker_aws_accesskey/">https://infraya.work/posts/docker_aws_accesskey/</a></dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>UbuntuデスクトップでDockerコンテナに任意のdnsを設定する</dt>
+<dd><a class="reference external" href="https://mzryuka.hatenablog.jp/entry/2019/08/07/235613">https://mzryuka.hatenablog.jp/entry/2019/08/07/235613</a></dd>
+</dl>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="20201129.html" class="btn btn-neutral float-left" title="Amazon SQSを使ったSpringアプリケーション" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, enomotohj
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
