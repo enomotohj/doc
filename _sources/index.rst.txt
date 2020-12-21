@@ -14,6 +14,7 @@ Welcome to enomotohj's documentation!
    memo/reports/20201116
    memo/reports/20201129
    memo/reports/20201207
+   memo/reports/20201221
 
 Indices and tables
 ==================

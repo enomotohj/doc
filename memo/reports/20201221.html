@@ -1,0 +1,336 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Apache Kafkaを使ったSpringアプリケーション &mdash; enomotohj 0.1-SNAPSHOTS documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="Amazon SQSを使ったSpringアプリケーション２" href="20201207.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> enomotohj
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="20201109.html">REST APIをWebClientで呼出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20201116.html">AWS ECS上に構築するSpringアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20201129.html">Amazon SQSを使ったSpringアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20201207.html">Amazon SQSを使ったSpringアプリケーション２</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Apache Kafkaを使ったSpringアプリケーション</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#producerapp">ProducerApp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#consumerapp">ConsumerApp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#todo">TODO</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">参考資料</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">enomotohj</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Apache Kafkaを使ったSpringアプリケーション</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/memo/reports/20201221.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="apache-kafkaspring">
+<h1>Apache Kafkaを使ったSpringアプリケーション<a class="headerlink" href="#apache-kafkaspring" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="producerapp">
+<h2>ProducerApp<a class="headerlink" href="#producerapp" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>pom.xml</li>
+</ol>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;dependency&gt;</span>
+        <span class="nt">&lt;groupId&gt;</span>org.springframework.kafka<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>spring-kafka<span class="nt">&lt;/artifactId&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li>Controllerクラス</li>
+</ol>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@RestController</span>
+<span class="nd">@RequestMapping</span><span class="p">(</span><span class="s">&quot;api/v1&quot;</span><span class="p">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SampleRestController</span> <span class="p">{</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="n">SampleRepository</span> <span class="n">sampleRepository</span><span class="p">;</span>
+
+    <span class="nd">@GetMapping</span><span class="p">(</span><span class="s">&quot;/batch&quot;</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">batch</span><span class="p">(</span><span class="n">String</span> <span class="n">message</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">sampleRepository</span><span class="p">.</span><span class="na">run</span><span class="p">(</span>
+                <span class="n">Sample</span><span class="p">.</span><span class="na">builder</span><span class="p">()</span>
+                        <span class="p">.</span><span class="na">message</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+                        <span class="p">.</span><span class="na">build</span><span class="p">());</span>
+        <span class="k">return</span> <span class="s">&quot;Event accepted.&quot;</span><span class="p">;</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li>Repositoryクラス</li>
+</ol>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Slf4j</span>
+<span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SampleRepositoryImpl</span> <span class="kd">implements</span> <span class="n">SampleRepository</span> <span class="p">{</span>
+
+    <span class="nd">@Value</span><span class="p">(</span><span class="s">&quot;${spring.kafka.topic}&quot;</span><span class="p">)</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">topic</span><span class="p">;</span>
+
+    <span class="nd">@Autowired</span>
+    <span class="kd">private</span> <span class="n">KafkaTemplate</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span> <span class="n">String</span><span class="o">&gt;</span> <span class="n">template</span><span class="p">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="p">(</span><span class="n">Sample</span> <span class="n">sample</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="na">template</span><span class="p">.</span><span class="na">send</span><span class="p">(</span><span class="n">topic</span><span class="p">,</span> <span class="n">sample</span><span class="p">.</span><span class="na">getMessage</span><span class="p">());</span>
+        <span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="s">&quot;all message received&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li>application.yml</li>
+</ol>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>spring:
+  kafka:
+    topic: myTopic
+</pre></div>
+</div>
+</div>
+<div class="section" id="consumerapp">
+<h2>ConsumerApp<a class="headerlink" href="#consumerapp" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>pom.xml</li>
+</ol>
+<p>ProducerAppと同じ</p>
+<ol class="arabic simple" start="2">
+<li>Listenerクラス</li>
+</ol>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="nd">@Slf4j</span>
+<span class="nd">@Component</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">MessageListener</span> <span class="p">{</span>
+
+    <span class="nd">@KafkaListener</span><span class="p">(</span><span class="n">id</span><span class="o">=</span><span class="s">&quot;enomotohj&quot;</span><span class="p">,</span><span class="n">topics</span> <span class="o">=</span> <span class="s">&quot;myTopic&quot;</span><span class="p">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">listen</span><span class="p">(</span><span class="n">Sample</span> <span class="n">sample</span><span class="p">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="p">{</span>
+        <span class="n">log</span><span class="p">.</span><span class="na">info</span><span class="p">(</span><span class="n">sample</span><span class="p">.</span><span class="na">getMessage</span><span class="p">());</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="todo">
+<h2>TODO<a class="headerlink" href="#todo" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>メッセージング処理で失敗した場合、DBもロールバックできるか？</li>
+<li>DataSourceTransactionManagerとKafkaTransactionManagerを合わせて使えるか？</li>
+<li><a class="reference external" href="https://docs.spring.io/spring-kafka/docs/current/reference/html/#transactions">https://docs.spring.io/spring-kafka/docs/current/reference/html/#transactions</a></li>
+</ul>
+</div>
+<div class="section" id="id1">
+<h2>参考資料<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Spring for Apache Kafka</li>
+</ul>
+<p><a class="reference external" href="https://docs.spring.io/spring-kafka/docs/current/reference/html/">https://docs.spring.io/spring-kafka/docs/current/reference/html/</a></p>
+<ul class="simple">
+<li>producer</li>
+</ul>
+<p><a class="reference external" href="https://docs.spring.io/spring-kafka/docs/current/reference/html/#sending-messages">https://docs.spring.io/spring-kafka/docs/current/reference/html/#sending-messages</a></p>
+<ul class="simple">
+<li>consumer</li>
+</ul>
+<p><a class="reference external" href="https://docs.spring.io/spring-kafka/docs/current/reference/html/#sending-messages">https://docs.spring.io/spring-kafka/docs/current/reference/html/#sending-messages</a></p>
+<ul class="simple">
+<li>Apache Kafka 公式サイト</li>
+</ul>
+<p><a class="reference external" href="https://kafka.apache.org/quickstart">https://kafka.apache.org/quickstart</a></p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>$ wget https://ftp.riken.jp/net/apache/kafka/2.6.0/kafka_2.13-2.6.0.tgz
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="20201207.html" class="btn btn-neutral float-left" title="Amazon SQSを使ったSpringアプリケーション２" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, enomotohj
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

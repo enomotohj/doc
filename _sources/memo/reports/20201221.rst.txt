@@ -1,0 +1,119 @@
+=======================================
+Apache Kafkaを使ったSpringアプリケーション
+=======================================
+
+ProducerApp
+=======================================
+
+1. pom.xml
+
+.. code-block:: xml
+
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+
+2. Controllerクラス
+
+.. code-block:: java
+
+    @RestController
+    @RequestMapping("api/v1")
+    public class SampleRestController {
+
+        @Autowired
+        SampleRepository sampleRepository;
+
+        @GetMapping("/batch")
+        public String batch(String message) {
+            sampleRepository.run(
+                    Sample.builder()
+                            .message(message)
+                            .build());
+            return "Event accepted.";
+        }
+
+    }
+
+3. Repositoryクラス
+
+.. code-block:: java
+
+    @Slf4j
+    @Component
+    public class SampleRepositoryImpl implements SampleRepository {
+
+        @Value("${spring.kafka.topic}")
+        private String topic;
+
+        @Autowired
+        private KafkaTemplate<String, String> template;
+
+        @Override
+        public void run(Sample sample) {
+            this.template.send(topic, sample.getMessage());
+            log.info("all message received");
+        }
+
+    }
+
+4. application.yml
+
+.. code-block:: xml
+
+    spring:
+      kafka:
+        topic: myTopic
+
+
+
+ConsumerApp
+=======================================
+
+1. pom.xml
+
+ProducerAppと同じ
+
+2. Listenerクラス
+
+.. code-block:: java
+
+    @Slf4j
+    @Component
+    public class MessageListener {
+
+        @KafkaListener(id="enomotohj",topics = "myTopic")
+        public void listen(Sample sample) throws Exception {
+            log.info(sample.getMessage());
+        }
+
+    }
+
+
+TODO
+=======================================
+
+* メッセージング処理で失敗した場合、DBもロールバックできるか？
+* DataSourceTransactionManagerとKafkaTransactionManagerを合わせて使えるか？
+* https://docs.spring.io/spring-kafka/docs/current/reference/html/#transactions
+
+
+参考資料
+=======================================
+
+* Spring for Apache Kafka
+https://docs.spring.io/spring-kafka/docs/current/reference/html/
+
+* producer
+https://docs.spring.io/spring-kafka/docs/current/reference/html/#sending-messages
+
+* consumer
+https://docs.spring.io/spring-kafka/docs/current/reference/html/#sending-messages
+
+* Apache Kafka 公式サイト
+https://kafka.apache.org/quickstart
+
+.. code-block:: xml
+
+    $ wget https://ftp.riken.jp/net/apache/kafka/2.6.0/kafka_2.13-2.6.0.tgz
