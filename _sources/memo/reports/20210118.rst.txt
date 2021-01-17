@@ -1,0 +1,51 @@
+================================================================
+spring-cloud-stream
+================================================================
+
+1. サンプルイメージ
+================================================================
+
+
+2. Producer
+================================================================
+
+    .. code-block:: java
+
+        @SpringBootApplication
+        public class SpringCloudStreamProducerApplication {
+
+            public static void main(String[] args) {
+                SpringApplication.run(SpringCloudStreamProducerApplication.class, args);
+            }
+
+            @Bean //[1]
+            public Supplier<Message> produce() {　//[2]
+                return () -> { //[3]
+                    Message message = new Message();
+                    message.setMessage(Integer.toString(new Random().nextInt(300))); 
+                    return message;
+                };
+            }
+
+        }
+
+3. Consumer
+================================================================
+
+    .. code-block:: java
+
+        @SpringBootApplication
+        public class SpringCloudStreamConsumerApplication {
+
+            public static void main(String[] args) {
+                SpringApplication.run(SpringCloudStreamConsumerApplication.class, args);
+            }
+
+            @Bean //[1]
+            public Consumer<Message> consume() { //[2]
+                return message -> {
+                    System.out.println("Received: " + message); //[3]
+                };
+            }
+
+        }
