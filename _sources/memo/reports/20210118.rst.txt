@@ -1,51 +1,159 @@
 ================================================================
-spring-cloud-stream
+Spring for Apache Kafka
 ================================================================
 
-1. サンプルイメージ
+1. Spring for Apache Kafka
+================================================================
+* Apache Kafkaとメッセージをやり取りするためのSpringライブラリ
+* 2021/2時点で最新バージョンは2.6.5
+* https://spring.pleiades.io/projects/spring-kafka#overview
+
+2. Spring for Apache Kafka のアーキテクチャ
 ================================================================
 
+作成中
 
-2. Producer
+3. Spring for Apache Kafka を使ったサンプルアプリケーション
 ================================================================
 
-    .. code-block:: java
+Producer
+----------------------------------------------------------------
 
-        @SpringBootApplication
-        public class SpringCloudStreamProducerApplication {
+* pom.xml
 
-            public static void main(String[] args) {
-                SpringApplication.run(SpringCloudStreamProducerApplication.class, args);
-            }
+.. code-block:: xml
 
-            @Bean //[1]
-            public Supplier<Message> produce() {　//[2]
-                return () -> { //[3]
-                    Message message = new Message();
-                    message.setMessage(Integer.toString(new Random().nextInt(300))); 
-                    return message;
-                };
-            }
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
 
+* Controllerクラス
+
+.. code-block:: java
+
+    @RestController
+    @RequestMapping("api/v1")
+    public class SampleRestController {
+
+        @Autowired
+        SampleRepository sampleRepository;
+
+        @GetMapping("/batch")
+        public String batch(String message) {
+            sampleRepository.run(
+                    Sample.builder()
+                            .message(message)
+                            .build());
+            return "Event accepted.";
         }
 
-3. Consumer
+    }
+
+* Repositoryクラス
+
+.. code-block:: java
+
+    @Slf4j
+    @Component
+    public class SampleRepositoryImpl implements SampleRepository {
+
+        @Value("${spring.kafka.topic}")
+        private String topic;
+
+        @Autowired
+        private KafkaTemplate<String, String> template;
+
+        @Override
+        public void run(Sample sample) {
+            this.template.send(topic, sample.getMessage());
+            log.info("all message received");
+        }
+
+    }
+
+* application.yml
+
+.. code-block:: xml
+
+    spring:
+      kafka:
+        topic: myTopic
+
+
+Consumer
+----------------------------------------------------------------
+
+* pom.xml
+
+Producerと同じ
+
+* Listenerクラス
+
+.. code-block:: java
+
+    @Slf4j
+    @Component
+    public class MessageListener {
+
+        @KafkaListener(id="enomotohj",topics = "myTopic")
+        public void listen(Sample sample) throws Exception {
+            log.info(sample.getMessage());
+        }
+
+    }
+
+* application.yml
+
+.. code-block:: xml
+
+    spring:
+    kafka:
+        topic: myTopic
+
+
+4. トランザクション管理
 ================================================================
 
-    .. code-block:: java
+* @Transactionalを付与することで、Kafkaとのメッセージ処理を含む一連の処理をトランザクショナルに実行可能になる
+* spring.kafka.producer.transaction-id-prefixをプロパティ設定すると自動でKafkaTransactionManagerのBeanが利用される
+* その他のTransactionManagerと併用も可能（https://docs.spring.io/spring-kafka/docs/current/reference/html/#chained-transaction-manager）
 
-        @SpringBootApplication
-        public class SpringCloudStreamConsumerApplication {
+4.1. Repositoryクラス
 
-            public static void main(String[] args) {
-                SpringApplication.run(SpringCloudStreamConsumerApplication.class, args);
-            }
+.. code-block:: java
 
-            @Bean //[1]
-            public Consumer<Message> consume() { //[2]
-                return message -> {
-                    System.out.println("Received: " + message); //[3]
-                };
-            }
+    @Slf4j
+    @Component
+    public class SampleRepositoryImpl implements SampleRepository {
 
+        @Value("${spring.kafka.topic}")
+        private String topic;
+
+        @Autowired
+        private KafkaTemplate<String, String> template;
+
+        @Override
+        @Transactional //[1]
+        public void run(Sample sample) {
+            this.template.send(topic, sample.getMessage());
+            log.info("all message received");
+            throw new RuntimeException(); //[2]
         }
+
+    }
+
+| [1] トランザクション管理の対象とするメソッドに@Transactionalを付与
+| [2] 何かしらの例外発生でメッセージ処理をロールバックしてくれる 
+
+4.2. application.yml
+
+.. code-block:: xml
+
+    spring:
+      kafka:
+        topic: myTopic
+        producer:
+            transaction-id-prefix: tx- //[1]
+    
+| [1] トランザクションIDに付与する接頭辞

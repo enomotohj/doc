@@ -8,6 +8,16 @@ spring-cloud-stream
 * Apache Kafka,RabbitMQ,Apache RocketMQ,Amazon Kinesis,...と連携可能
 * Spring Cloud 2020.0.0のリリースに伴い、Spring Cloud Streamも3.1.0にバージョンアップ
 
+リリーストレイン
+
+======================= =============== ==================
+Spring Cloud Stream     Spring Boot     Spring Cloud
+======================= =============== ==================
+??? [3.1.x]             2.4.x           Ilford [2020.0.0]
+Horsham [3.0.x]         2.2.x           Hoxton
+Germantown [2.2.x]      2.1.x           Greenwich
+======================= =============== ==================
+
 2. Spring Cloud Streamのアーキテクチャ
 ================================================================
 .. image:: ../../img/SpringCloudStream/SpringCloudStream.001.jpeg
@@ -19,7 +29,7 @@ spring-cloud-stream
 
 * @EnableBindingによるSource(Producer)、Sink(Consumer)の定義が非推奨(https://javadoc.io/doc/org.springframework.cloud/spring-cloud-stream/latest/index.html)
 * Spring Cloud Functionを利用し、Javaの関数型インタフェースをBean定義すればSpringCloudStreamで自動的に呼び出される
-* 開発者はJavaオブジェクトをSourceやSinkとして明示的に定義しなくてもよくなる
+* 開発者はJavaオブジェクトをSourceやSinkとして明示的に定義しなくてもよい
 
     * Producerのサンプル比較
 
