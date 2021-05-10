@@ -17,6 +17,7 @@ Welcome to enomotohj's documentation!
    memo/reports/20201221
    memo/reports/20210112
    memo/reports/20210118
+   memo/reports/swagger-tutorial
 
 Indices and tables
 ==================

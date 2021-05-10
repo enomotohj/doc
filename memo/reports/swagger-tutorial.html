@@ -1,0 +1,482 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>OpenAPI &mdash; enomotohj 0.1-SNAPSHOTS documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="Spring for Apache Kafka" href="20210118.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> enomotohj
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="20201109.html">REST APIをWebClientで呼出</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20201116.html">AWS ECS上に構築するSpringアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20201129.html">Amazon SQSを使ったSpringアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20201207.html">Amazon SQSを使ったSpringアプリケーション２</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20201221.html">Apache Kafkaを使ったSpringアプリケーション</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20210112.html">spring-cloud-stream</a></li>
+<li class="toctree-l1"><a class="reference internal" href="20210118.html">Spring for Apache Kafka</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">OpenAPI</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#openapi-specification"># OpenAPI Specification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#openapi-generator"># OpenAPI generator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1"># アーキテクチャ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2"># 動作環境</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oas"># OASサンプル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#microservicex-client"># MicroServiceX（Client）</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#microservicey-server"># MicroServiceY（Server）</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">プロジェクト構成</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">OpenAPI Generatorを実行するシェル</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5">自動生成クラス</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id6"># コードサンプル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id7"># 参考文献</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">enomotohj</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>OpenAPI</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/memo/reports/swagger-tutorial.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="openapi">
+<h1>OpenAPI<a class="headerlink" href="#openapi" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="openapi-specification">
+<h2># OpenAPI Specification<a class="headerlink" href="#openapi-specification" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>OpenAPI Specification(OAS)とは、REST APIのインタフェースを記述するための標準規格</li>
+<li>本資料を執筆した2021/05/05時点での最新バージョンは3.1.0（公式サイトでは3.0.3だがGithub上は3.1.0）</li>
+<li>OASはjsonまたはyamlで記述される</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="openapi-generator">
+<h2># OpenAPI generator<a class="headerlink" href="#openapi-generator" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>OASファイルから様々な言語のAPIクライアント、スタブサーバを生成するツール</li>
+<li></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="id1">
+<h2># アーキテクチャ<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<img alt="../../_images/openapi-demo.png" src="../../_images/openapi-demo.png" />
+</div>
+<div class="section" id="id2">
+<h2># 動作環境<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>自端末のローカル環境で動作検証を行った。各種バージョンは以下の通り。</dt>
+<dd><ul class="first last simple">
+<li>macOS Catalina 10.15.7</li>
+<li>Java 11.0.5</li>
+<li>Apache Maven 3.8.1</li>
+<li>springboot 2.4.5</li>
+<li>openapi-generator-cli 5.1.0</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="oas">
+<h2># OASサンプル<a class="headerlink" href="#oas" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>IDを渡すとポケモンオブジェクトを返すAPIを想定し、pokemon.yamlを作成</li>
+<li>OAS ファイルの記述ルールは、OpenAPI3.0仕様書（<a class="reference external" href="https://swagger.io/specification/">https://swagger.io/specification/</a>）を参照</li>
+</ul>
+<div class="line-block">
+<div class="line">pokemon.yaml</div>
+</div>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>openapi: &#39;3.0.3&#39;
+info:
+title: PokemonAPI
+version: &#39;1.0&#39;
+servers:
+- url: https://api.server.test/v1
+paths:
+/pokemons/{id}:
+    get:
+    description: &quot;Get a pokemon by ID&quot;
+    parameters:
+        - name: &quot;id&quot;
+        in: &quot;path&quot;
+        schema:
+            type: string
+        description: Numeric ID of the user to get
+        required: true
+    responses:
+        &quot;200&quot;:
+        description: OK
+        content:
+            application/json:
+            schema:
+                type: &quot;object&quot;
+                properties:
+                id:
+                    type: &quot;string&quot;
+                name:
+                    type: &quot;string&quot;
+                type:
+                    type: &quot;string&quot;
+                comment:
+                    type: &quot;string&quot;
+    operationId: get-pokemon-by-id
+</pre></div>
+</div>
+</div>
+<div class="section" id="microservicex-client">
+<h2># MicroServiceX（Client）<a class="headerlink" href="#microservicex-client" title="Permalink to this headline">¶</a></h2>
+<p>★作成中</p>
+</div>
+<div class="section" id="microservicey-server">
+<h2># MicroServiceY（Server）<a class="headerlink" href="#microservicey-server" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id3">
+<h3>プロジェクト構成<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>openapi-demo
+    ├ src/main/java/com/enomoso/openapidemo
+    │                               ├ config <span class="c1">#[1]</span>
+    │                               ├ controller <span class="c1">#[2]</span>
+    │                               ├ model <span class="c1">#[3]</span>
+    │                               └ generated/server <span class="c1">#[4]</span>
+    ├ openapi-generator.sh <span class="c1">#[5]</span>
+    ├ pokemon.yaml <span class="c1">#[6]</span>
+    ├ …
+    └ pom.xml
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">[1]コンフィグクラスを配置するところ</div>
+<div class="line">[2]コントローラ（実装クラス）を配置するところ</div>
+<div class="line">[3]OpenAPI Generatorで生成する以外のModelクラスを配置するところ</div>
+<div class="line">[4]OpenAPI Generatorで生成するクラスを配置するところ</div>
+<div class="line">[5]OpenAPI Generatorを実行するシェル</div>
+<div class="line">[6]OASファイル</div>
+</div>
+</div>
+<div class="section" id="id4">
+<h3>OpenAPI Generatorを実行するシェル<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><div class="line-block">
+<div class="line">openapi-generator.sh</div>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/sh</span>
+
+<span class="nv">OUT</span><span class="o">=</span>.
+
+openapi-generator generate <span class="se">\</span>
+    -i ./pokemon.yml <span class="se">\ </span><span class="c1">#[1]</span>
+    -o <span class="si">${</span><span class="nv">OUT</span><span class="si">}</span>/ <span class="se">\ </span><span class="c1">#[2]</span>
+    --api-package com.enomoso.openapidemo.generated.server.controller <span class="se">\ </span><span class="c1">#[3]</span>
+    --model-package com.enomoso.openapidemo.generated.server.model <span class="se">\ </span><span class="c1">#[4]</span>
+    -g spring <span class="se">\ </span><span class="c1">#[5]</span>
+    --library spring-boot <span class="se">\ </span><span class="c1">#[6]</span>
+    -p <span class="nv">interfaceOnly</span><span class="o">=</span><span class="nb">true</span> <span class="se">\ </span><span class="c1">#[7]</span>
+    -p <span class="nv">dateLibrary</span><span class="o">=</span>java8 <span class="c1">#[8]</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">[1]インプットになるOASファイル（API仕様書）</div>
+<div class="line">[2]</div>
+<div class="line">[3]Controllerインタフェースクラスを出力するjavaパッケージ</div>
+<div class="line">[4]Modelクラスを出力するjavaパッケージ</div>
+<div class="line">[5]</div>
+<div class="line">[6]</div>
+<div class="line">[7]</div>
+<div class="line">[8]</div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="id5">
+<h3>自動生成クラス<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">使われないライブラリをインポートしている警告が出るが無視。</p>
+</li>
+<li><p class="first">自動生成クラスには手をつけない。必ずOASから出力したまま。</p>
+<blockquote>
+<div><div class="line-block">
+<div class="line">src/main/java/com/enomoso/openapidemo/generated/server/controller/PokemonsApi.java (Controllerインタフェースクラス)</div>
+</div>
+<ul class="simple">
+<li>インタフェースクラスのため、開発者が実装クラスを作成する必要がある</li>
+<li>defaultメソッドが出力されるが、501(NOT_IMPLEMENTED)が返却される</li>
+</ul>
+<div class="highlight-java notranslate"><div class="highlight"><pre><span></span><span class="cm">/**</span>
+<span class="cm">* NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech) (5.1.0).</span>
+<span class="cm">* https://openapi-generator.tech</span>
+<span class="cm">* Do not edit the class manually.</span>
+<span class="cm">*/</span>
+<span class="kn">package</span> <span class="nn">com.enomoso.openapidemo.generated.server.controller</span><span class="p">;</span>
+
+<span class="kn">import</span> <span class="nn">com.enomoso.openapidemo.generated.server.model.InlineResponse200</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">io.swagger.annotations.*</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.http.HttpStatus</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.http.MediaType</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.http.ResponseEntity</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.validation.annotation.Validated</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.bind.annotation.*</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.context.request.NativeWebRequest</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.web.multipart.MultipartFile</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">springfox.documentation.annotations.ApiIgnore</span><span class="p">;</span>
+
+<span class="kn">import</span> <span class="nn">javax.validation.Valid</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">javax.validation.constraints.*</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.List</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Map</span><span class="p">;</span>
+<span class="kn">import</span> <span class="nn">java.util.Optional</span><span class="p">;</span>
+<span class="nd">@javax.annotation.Generated</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">&quot;org.openapitools.codegen.languages.SpringCodegen&quot;</span><span class="p">,</span> <span class="n">date</span> <span class="o">=</span> <span class="s">&quot;2021-05-05T16:23:13.017292+09:00[Asia/Tokyo]&quot;</span><span class="p">)</span>
+<span class="nd">@Validated</span>
+<span class="nd">@Api</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">&quot;pokemons&quot;</span><span class="p">,</span> <span class="n">description</span> <span class="o">=</span> <span class="s">&quot;the pokemons API&quot;</span><span class="p">)</span>
+<span class="kd">public</span> <span class="kd">interface</span> <span class="nc">PokemonsApi</span> <span class="p">{</span>
+
+    <span class="k">default</span> <span class="n">Optional</span><span class="o">&lt;</span><span class="n">NativeWebRequest</span><span class="o">&gt;</span> <span class="nf">getRequest</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="n">Optional</span><span class="p">.</span><span class="na">empty</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="cm">/**</span>
+<span class="cm">    * GET /pokemons/{id}</span>
+<span class="cm">    * Get a pokemon by ID</span>
+<span class="cm">    *</span>
+<span class="cm">    * @param id Numeric ID of the user to get (required)</span>
+<span class="cm">    * @return OK (status code 200)</span>
+<span class="cm">    */</span>
+    <span class="nd">@ApiOperation</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">nickname</span> <span class="o">=</span> <span class="s">&quot;getPokemonById&quot;</span><span class="p">,</span> <span class="n">notes</span> <span class="o">=</span> <span class="s">&quot;Get a pokemon by ID&quot;</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="n">InlineResponse200</span><span class="p">.</span><span class="na">class</span><span class="p">,</span> <span class="n">tags</span><span class="o">=</span><span class="p">{</span>  <span class="p">})</span>
+    <span class="nd">@ApiResponses</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nd">@ApiResponse</span><span class="p">(</span><span class="n">code</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;OK&quot;</span><span class="p">,</span> <span class="n">response</span> <span class="o">=</span> <span class="n">InlineResponse200</span><span class="p">.</span><span class="na">class</span><span class="p">)</span> <span class="p">})</span>
+    <span class="nd">@GetMapping</span><span class="p">(</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="s">&quot;/pokemons/{id}&quot;</span><span class="p">,</span>
+        <span class="n">produces</span> <span class="o">=</span> <span class="p">{</span> <span class="s">&quot;application/json&quot;</span> <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="k">default</span> <span class="n">ResponseEntity</span><span class="o">&lt;</span><span class="n">InlineResponse200</span><span class="o">&gt;</span> <span class="nf">getPokemonById</span><span class="p">(</span><span class="nd">@ApiParam</span><span class="p">(</span><span class="n">value</span> <span class="o">=</span> <span class="s">&quot;Numeric ID of the user to get&quot;</span><span class="p">,</span><span class="n">required</span><span class="o">=</span><span class="kc">true</span><span class="p">)</span> <span class="nd">@PathVariable</span><span class="p">(</span><span class="s">&quot;id&quot;</span><span class="p">)</span> <span class="n">String</span> <span class="n">id</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">getRequest</span><span class="p">().</span><span class="na">ifPresent</span><span class="p">(</span><span class="n">request</span> <span class="o">-&gt;</span> <span class="p">{</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">MediaType</span> <span class="n">mediaType</span><span class="p">:</span> <span class="n">MediaType</span><span class="p">.</span><span class="na">parseMediaTypes</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="na">getHeader</span><span class="p">(</span><span class="s">&quot;Accept&quot;</span><span class="p">)))</span> <span class="p">{</span>
+                <span class="k">if</span> <span class="p">(</span><span class="n">mediaType</span><span class="p">.</span><span class="na">isCompatibleWith</span><span class="p">(</span><span class="n">MediaType</span><span class="p">.</span><span class="na">valueOf</span><span class="p">(</span><span class="s">&quot;application/json&quot;</span><span class="p">)))</span> <span class="p">{</span>
+                    <span class="n">String</span> <span class="n">exampleString</span> <span class="o">=</span> <span class="s">&quot;{ \&quot;name\&quot; : \&quot;name\&quot;, \&quot;comment\&quot; : \&quot;comment\&quot;, \&quot;id\&quot; : \&quot;id\&quot;, \&quot;type\&quot; : \&quot;type\&quot; }&quot;</span><span class="p">;</span>
+                    <span class="n">ApiUtil</span><span class="p">.</span><span class="na">setExampleResponse</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s">&quot;application/json&quot;</span><span class="p">,</span> <span class="n">exampleString</span><span class="p">);</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+        <span class="p">});</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="n">ResponseEntity</span><span class="o">&lt;&gt;</span><span class="p">(</span><span class="n">HttpStatus</span><span class="p">.</span><span class="na">NOT_IMPLEMENTED</span><span class="p">);</span>
+
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<div class="last line-block">
+<div class="line">上記のシェルを実行し、コントローラインタフェースクラスを自動生成すると、同時にpom.xmlがスタブサーバ用に書き換えられてしまう。初回生成が完了したら、.openapi-generator-ignoreにpom.xmlを追記することが望ましい。そうしないと毎回pom.xmlを書き換えられ、コンパイルエラーがあちこちで発生する。</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="id6">
+<h2># コードサンプル<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line">参考までにサンプルプログラムを載せる。</div>
+<div class="line"><a class="reference external" href="https://github.com/enomotohj/openapi-demo">https://github.com/enomotohj/openapi-demo</a></div>
+</div>
+</div>
+<div class="section" id="id7">
+<h2># 参考文献<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h2>
+<div class="line-block">
+<div class="line">OpenAPI generator インストール手順</div>
+<div class="line"><a class="reference external" href="https://openapi-generator.tech/docs/installation">https://openapi-generator.tech/docs/installation</a></div>
+<div class="line">Swagger generatorあれこれ</div>
+<div class="line"><a class="reference external" href="https://qiita.com/ksper/items/87abb20b78f79db013be">https://qiita.com/ksper/items/87abb20b78f79db013be</a></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="20210118.html" class="btn btn-neutral float-left" title="Spring for Apache Kafka" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, enomotohj
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
